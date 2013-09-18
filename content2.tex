@@ -1188,7 +1188,7 @@ This table describes the behavior of the solution when one or more of the compon
 
 \begin{table}[H]
 		\centering
-		\begin{tabular}{lcl}
+		\begin{tabularx}{\textwidth}{lcX}
 			Component & \# nodes & Impact  \\ \hline 
 			Front End & 1 & No Impact \\
 			Front End & 2-3 & Performance might be reduced \\
@@ -1198,12 +1198,16 @@ This table describes the behavior of the solution when one or more of the compon
 			OWA & 1 & No impact \\
 			OWA & 2 & Performance might be reduced \\
 			OWA & 3 & No presentation sharing \\
-			Back End & 1 & No impact if witness is operational \newline Else, see below\\
-			Back End & 2 & No presentation sharing \\
-		\end{tabular}
+			Back End & 1 &  No impact if witness is operational \newline Else, see below\\
+			Back End & 2 & User are switched to resiliency mode \\
+			Director & 1 & No impact \\
+			Director & 2 & No external login \\
+			DFS & - & No change can be made to the infrastructure \\
+			Reverse Proxy & - & No Lync mobile clients support \newline No external web services \\
+		\end{tabularx}
 		\caption{\label{tab:case_ha} Availability table}
 		\end{table}
-\missingfigure{Availability table}
+
 
 
 \subsubsection{Load Balancing}
