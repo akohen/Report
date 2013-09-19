@@ -510,7 +510,12 @@ Outlook 2013 is the client-side software associated with Exchange 2013, but it c
 \paragraph{}
 Outlook is also available as a web application called Outlook Web App (OWA), which is used to provide remote users access to their mailbox, contacts, and calendar.
 
-\missingfigure{Outlook2013 screencaps}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{Schemas/exchange2013.png}
+	\caption{Exchange 2013 client}
+	\label{fig:background_exchange}
+\end{figure}
 
 \subsection{Exchange 2013}
 \paragraph{}
@@ -527,8 +532,6 @@ Exchange 2013 reduced the number of roles from five in Exchange 2010 down to two
 
 \subsubsection{Administration}
 Exchange 2013 can be administered with graphical user interface (GUI) tools, such as Microsoft Management Console (MMC) snap-ins, but there are also new PowerShell 3.0 cmdlets to create scripts and automate tasks, as well as the web based Exchange Administrator Central that allows an administrator to configure the Exchange 2013 architecture from any browser\cite[Ch. 3\&5]{redmond_microsoft_2010}.
-
-\missingfigure{Exchange admin tool}
 
 
 
@@ -1099,10 +1102,27 @@ This section lists the requirements that had to be met by Contoso's infrastructu
 		\end{itemize}
 		
 	\subsubsection{PKI and certificates}
-		To allow Lync traffic to use TLS and MTLS connections, the Lync infrastructure requires X.509 certificates.		
+		To allow Lync traffic to use TLS and MTLS connections, the Lync infrastructure requires X.509 certificates.	
+		
+	\subsubsection{File Share}
+		The Lync infrastructure uses a file share for exchanging information, such as topology changes, address book files or conference data. As this component is required, the file share should be highly available. Contoso chose to use their existing Distributed File System (DFS) infrastructure, with the DFS-R replication mechanism, which replicates only the updated part of files.
 		
 		
-\todo{Network requirements}
+	\subsubsection{Network}
+		The network quality is crucial to the Lync infrastructure, as it will determine the overall experience quality for the users. The general recommendations for the network are:
+		\begin{itemize}
+			\item No NAT between Lync internal components.
+			\item QoS components should not process real-time Lync traffic.
+			\item Audio and video bandwidth usage should not exceed 30\% of the WAN capacity.
+			\item Packet loss should be less than 1\%.
+			\item Jitter should be under 30ms and latency under 150ms.
+		\end{itemize}
+		
+		
+		\todo{Bandwidth calculation}
+		
+		
+		
 
 
 \subsection{Architecture}
@@ -1251,63 +1271,20 @@ Clients with a mobile device, such as an Apple iPhone or Apple iPad, use the sam
 				\item Audio and video conference room; and
 				\item Mediation server with a PSTN gateway.
 			\end{itemize}
-		According to the company's existing usage data and Microsoft's recommendations, each server can handle 6,660 concurrent users, hence 5 servers are required for 30,000 concurrent users. An extra server is added to handle the additional traffic caused by mobile usage, and another server was added  to meet the high availability requirement. Therefore, seven servers are required. Each of these server meets the following system requirements:
-		\begin{itemize}
-			\item 2 x 6-core processor (12 cores)  2,33 GHz
-			\item 32GB RAM
-			\item System and Lync binaries disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item Lync local database disk: 6 x 300GB 10K RPM SAS - RAID10
-			\item 1 Gbps network link
-		\end{itemize}
+		According to the company's existing usage data and Microsoft's recommendations, each server can handle 6,660 concurrent users, hence 5 servers are required for 30,000 concurrent users. An extra server is added to handle the additional traffic caused by mobile usage, and another server was added  to meet the high availability requirement. Therefore, seven servers are required.
 		
 		
 		\item[3 SQL Servers] Two servers are Back-End servers in a mirroring configuration and host the Lync databases. The third server is a witness server used for automatic failover in case of failure of one of the Back-End servers.
-		Each back end server must meet these system requirements:
-		\begin{itemize}
-			\item 2x6-core processor (12 cores)  2,33 GHz
-			\item 32GB RAM
-			\item System and SQL server binaries disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item Lync database disk: 6 x 300GB 10K RPM SAS - RAID10
-			\item Lync monitoring database disk: 6 x 300GB 10K RPM SAS - RAID10
-			\item 1 Gbps network link
-		\end{itemize}
-		The SQL witness must meet these system requirements:
-		\begin{itemize}
-			\item 2x4-core processor (12 cores)  2,33 GHz
-			\item 8GB RAM
-			\item System and SQL Express binaries disk: 2 x 146GB 7.2K RPM SAS - RAID1
-			\item 1 Gbps network link
-		\end{itemize}
 		
 		
 		\item[3-server Office Web App pool] An Office Web App server is required for displaying shared PowerPoint presentations during conferences.
-		According to the usage data and Microsoft recommendations, each server can handle 20.000 concurrent users, which means that 2 servers are required for 30.000 concurrent users. An extra server has to be added to meet the high availability requirement. Therefore, 3 servers are required, with the following system requirements:
-		\begin{itemize}
-			\item 2x8-core processor (16 cores)  2,33 GHz
-			\item 16GB RAM
-			\item System and Office Web App binaries disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item 1 Gbps network link
-		\end{itemize}
+		According to the usage data and Microsoft recommendations, each server can handle 20.000 concurrent users, which means that 2 servers are required for 30.000 concurrent users. An extra server has to be added to meet the high availability requirement. Therefore, 3 servers are required.
 		
 		\item[A highly available DFS share] A Contoso file sharing infrastructure, used for Lync data storage. 200GB must be available for Lync Server 2013 on this file share.
 		
-		\item[A Watecher Node] This server monitors the solution's components and reports their status to the SCOM supervision infrastructure. The SQL Server Reporting Services (SSRS) will also be installed on this server.
-		The server must meet these system requirements:
-		\begin{itemize}
-			\item 4-core processor (4 cores) 2,33 GHz
-			\item 8GB RAM
-			\item System disk, with a 100Gb partition for SSRS databases and logs: 2 x 300GB 10K RPM SAS - RAID1
-			\item 1 Gbps network link
-		\end{itemize}
+		\item[A Watcher Node] This server monitors the solution's components and reports their status to the SCOM supervision infrastructure. The SQL Server Reporting Services (SSRS) will also be installed on this server.
 		
-		\item[1 SNOM provisionning server] This server is required for automatic provisionning of SNOM phones.
-		Its system requirements are:
-		\begin{itemize}
-			\item 4-core processor (4 cores) 2,33 GHz
-			\item 4GB RAM
-			\item System disk: 2 x 146GB 7.2K RPM SAS - RAID1
-			\item 1 Gbps network link
-		\end{itemize}
+		\item[1 SNOM provisionning server] This server is required for automatic provisionning of SNOM phones. This server will be co-located with the SQL Witness
 		
 		\item[4 SBC Sonus UX2000 gateways] 2 in the datacenter, 2 at Campus, they respectively provide interconnection with the SIRIUS WAN and Campus's PSTN access.
 		Datacenter gateway requirements:
@@ -1325,25 +1302,9 @@ Clients with a mobile device, such as an Apple iPhone or Apple iPad, use the sam
 		
 		
 		\item[A Survivable Branch Server] This server allows basic telephony features to remain accessible at the branch site if the Lync infrastructure at the datacenter becomes unreachable.
-		Its system requirements are:
-		\begin{itemize}
-			\item 2x6-core processor (12 cores) 2,33 GHz
-			\item 32GB RAM
-			\item System and Lync binaries disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item Lync local databases disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item 1 Gbps network link
-		\end{itemize}
 		
 		
-		\item[2-server Lync Director pool] This server pools is responsible for authentication and redirection of users to their home front end server.
-		Each server of the pool must meet these system requirements:
-		\begin{itemize}
-			\item 2x4-core processor (8 cores) 2,33 GHz
-			\item 16GB RAM
-			\item System and Lync binaries disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item Lync local database disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item 1 Gbps network link
-		\end{itemize}
+		\item[2-server Lync Director pool] This server pool is responsible for authentication and redirection of users to their home front end server.
 		
 	\end{description}
 
@@ -1353,21 +1314,13 @@ Clients with a mobile device, such as an Apple iPhone or Apple iPad, use the sam
 	\caption{Internal infrastructure}
 	\label{fig:case_internal}
 \end{figure}
-\missingfigure{Campus Infrastructure schema}
 
 
 	\subsubsection{External infrastructure}
 	The external infrastructure allows communications with networks other than Contoso's, such as the Internet, or the PSTN.
 	The external infrastructure is made up of:
 	\begin{description}
-		\item[2-server Lync Edge pool] This pool handles all non-web traffic, such as voice, video, and sip, from and to external users and federated edge servers. This pool is placed in the DMZ. Each server can handle 12.000 concurrent connections, so only one server and one server for high availability are required, with the following system requirements:
-		\begin{itemize}
-			\item 2x4-core processor (8 cores) 2,33 GHz
-			\item 16GB RAM
-			\item System and Lync binaries disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item Lync local databases disk: 2 x 300GB 10K RPM SAS - RAID1
-			\item 2x1 Gbps network link (one interface connected to the internal network, one interface connected to the Internet)
-		\end{itemize}
+		\item[2-server Lync Edge pool] This pool handles all non-web traffic, such as voice, video, and sip, from and to external users and federated edge servers. This pool is placed in the DMZ. Each server can handle 12.000 concurrent connections, so only one server and one server for high availability are required.
 		
 		\item[2 Reverse-proxy servers] These servers relay https traffic from mobile and external users. These servers are placed in the DMZ
 	\end{description}
@@ -1375,15 +1328,34 @@ Clients with a mobile device, such as an Apple iPhone or Apple iPad, use the sam
 		\centering
 		\includegraphics[width=0.9\textwidth, page=2]{Schemas/design.pdf}
 		\caption{External infrastructure}
-		\label{fig:case_extternal}
+		\label{fig:case_external}
 	\end{figure}
 
 	\subsubsection{System requirements}
-	\missingfigure{sysreq table (and remove from above)}
-
-
-
-
+	\begin{table}[H]
+		\centering
+		\begin{tabularx}{\textwidth}{ccccXc}
+			\textbf{Type} & \# & \textbf{CPU} & \textbf{RAM} & \textbf{Disk} & \textbf{Network}\\ \hline 
+			Front End & 7 & 2x6 - 2,33GHz & 32GB & 2x300GB RAID1 \newline 6x300GB RAID10 & 1Gbps \\ \hline 
+			
+			&&&& 2x300GB RAID1 & \\
+			Back End & 2 & 2x6 - 2,33GHz & 32GB & 6x300GB RAID10 & 1Gbps \\
+			&&&& 6x300GB RAID10 & \\ \hline 
+			
+			Witness & 1 & 2x4 - 2,33GHz & 8GB & 2x146GB RAID 1 & 1Gbps \\ \hline 
+			
+			OWA & 3 & 2x8 - 2,33GHz & 16GB & 2x300GB RAID1 & 1Gbps \\ \hline 
+			
+			Watcher node & 1 & 4 2,33GHz & 8GB & 2x300GB RAID1 & 1Gbps \\ \hline 
+			
+			SBS & 1 & 2x6 2,33GHz & 32GB & 2x300GB RAID1 \newline 2x300GB RAID1 & 1Gbps \\ \hline 
+			
+			Director & 2 & 2x4 2,33GHz & 16GB & 2x300GB RAID1 \newline 2x300GB RAID1 & 1Gbps \\ \hline 
+			
+			Edge & 2 & 2x4 2,33GHz & 16GB & 2x300GB RAID1 \newline 2x300GB RAID1 & 2x1Gbps \\
+		\end{tabularx}
+		\caption{\label{tab:case_sysreq} System requirements}
+		\end{table}
 
 
 \subsection{Telephony}
