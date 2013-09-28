@@ -345,12 +345,25 @@ There are two main protocols to support Quality of Service in IP Networks, Diffe
 \subsection{Public Key Cryptography}
 A public key algorithm relies on the use of asymmetric keys to encrypt and decrypt messages. Unlike in conventional (or symmetric) cryptography, the keys used to encrypt and decrypt the message are different. This allows the secure exchange of messages, with a decreased risk that the common secret used to encrypt the message is intercepted, and to generate cryptographic signatures. A Public Key Infrastructure (PKI) refers to a set of physical or logical components used to create, store, distribute and verify digital certificates\cite{stallings_cryptography_2014}.
 
+\subsection{Erlang}
+The Erlang is a unit used to telephony to measure the load of telephony circuits. For example, one Erlang can represent that a single resource (such as a telephony circuit, or a server) is used at 100\%, or that two resources are used at 50\%. Moreover, an user with a phone usage of 0.05 Erlang spends 5\% of his time on the phone.
+
+The Erlang-B formula is used to determine the number of circuits required to achieve a determined grade of service, which is the fraction of calls blocked due to all circuits being used.
+
+The Erlang-B formula is defined as: 
+\[  P_b = \frac{\frac{E^m}{m!}} { \sum_{i=0}^m \frac{E^i}{i!}} \]
+where $P_b$ is the grade of service, $E$ is the load in Erlangs, and $m$ is the number of circuits
+\cite{qiao_robust_1998}.
+
+
+
+
 \section{Legal}\label{background_legal}
 
 In France, there are many laws and rules applicable to UC, but no specific legislation and very little case-law. Therefore the resulting legal background for UC is complex, but cannot be ignored as it can affect UC solution deployment and operations.
 
 \subsection{Privacy}
-There can be privacy concerns over the content of the communications held through a UC solution. In France, there is no specific law, but different general laws apply, such as the law on the privacy of letters, and on telecommunications exchanges. According to these laws, it's illegal for someone who is not a recipient of a message to prevent or delay its delivery, tamper, read, or diffuse its content\cite{_atteinte_????,_loi_????,_loi_????-1}. However this applies only to communications identified as personal\cite{_cour_????}. Professional communications have different legislation, depending on the company.
+There can be privacy concerns over the content of the communications held through a UC solution. In France, there is no specific law, but different general laws apply, such as the law on the privacy of letters, and on telecommunications exchanges. According to these laws, it's illegal for someone who is not a recipient of a message to prevent or delay its delivery, tamper, read, or diffuse its content\cite{_code_????,_loi_????,_loi_????-1}. However this applies only to communications identified as personal\cite{_cour_????}. Professional communications have different legislation, depending on the company.
 
 
 \subsection{Archiving and compliance}
@@ -430,7 +443,6 @@ The Microsoft Management Console can be used as a graphical interface for config
 
 \paragraph{PowerShell}
 The PowerShell interface can be used to manage servers without using a graphical interface.
-\missingfigure{screencaps/RDC/MMC/PS?}
 
 
 \section{Active Directory}
@@ -573,7 +585,6 @@ The user can search for contacts by name or skills through the search box. Resul
 The user can also display the contact card for each contact. This contact card lists messaging options, contact information (such as address or phone number) and their organization information (such as their chain of managers, from their manager to the company's CEO, people with the same manager, or their collaborators). The search and contact card make it easy to find the correct person or persons quickly, enabling users to find available persons with the appropriate skills
 \cite[Ch. 1.1]{winters_mastering_2012}.
 
-\missingfigure{Contact list/search/contact card}
 
 \subsubsection{Presence}
 The Lync client can be used to access presence information of contacts within the company or within federated organizations. The contact's status is the first form of presence information. This presence information can be set manually or automatically to one of: available, away, busy, do not disturb, be right back, in a conference/call, or offline. This allows people to know how to contact the person, and when they might get an answer. This status also changes how messages will be delivered, for example, an incoming instant message will play an audio notification if the user's status is set to available, a visual notification if the person is busy, or no notification if the person should not be disturbed.
@@ -586,7 +597,19 @@ The user's location can also be set. When in a new location, the user can enter 
 \subsubsection{Instant messaging}
 Instant messaging conversations can be started by double clicking on a contact name in the contacts list. Messages will be sent to the recipient's current device (computer, phone, or browser application), or delivered to them when they next connect to the Lync server. Depending on the user's  status, the recipient will get different notifications of the incoming message. The user can reply to or ignore the message. Participants in an instant messaging discussion can invite other people to join the conversation, or add voice, video, whiteboard, presentations, or other activities to the conversation. After leaving the conversation, all of the messages are recorded, and a list of previous conversations is available under the Conversation tab of the main screen.
 
-\missingfigure{Conversation screen/list}
+\begin{figure}
+	\begin{minipage}[c]{0.3\textwidth}
+		\includegraphics[width=\textwidth]{Schemas/contacts.png}
+	\end{minipage}
+	\begin{minipage}[c]{.38\linewidth}
+		\includegraphics[width=\textwidth]{Schemas/chat.png}
+	\end{minipage}
+	\begin{minipage}[c]{.3\linewidth}
+		\includegraphics[width=\textwidth]{Schemas/conversations.png}
+	\end{minipage}
+
+   	\caption{Lync 2013 contacts list and conversations}
+\end{figure}
 
 \subsubsection{VoIP and Enterprise Voice}
 The Lync client can be used for voice communications, either by adding voice to a text conversation, or by starting a voice conversation from the contact list or a contact card. If both parties have VoIP support, then the communication is established using VoIP. This is usually the case between Lync Desktop and web clients, or other federated desktop clients, such as Skype.
@@ -748,6 +771,12 @@ The media bypass feature allows the audio flux to transit directly to the PSTN g
 
 The media bypass can enabled for the whole solution, or for specific sites. If media bypass is enabled, the communication between the Lync client and the gateway is established via the G.711 CODEC.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth, page=2]{Schemas/Lync.pdf}
+	\caption{Media Bypass}
+	\label{fig:lync_mediabypass}
+\end{figure}
 
 \subsubsection{Call routing}
 Lync calls routing uses the following components\cite{microsoft_technet_dial_2012}:
@@ -762,16 +791,40 @@ Lync calls routing uses the following components\cite{microsoft_technet_dial_201
 \item[PSTN Usage] A PSTN usage is use to link voice policies and routes. There can be a many-to-many relationship between voice policies and PSTN usage, and between PSTN usage and routes.
 
 \item[Trunk configuration] Allows number manipulation on outgoing calls.
-
 \end{description}
 
-\begin{figure}[h!]
+The figure \ref{fig:lync_routing} describes the call routing process used by Lync.
+
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=1\textwidth, page=6]{Schemas/lync_routing.pdf}
 	\caption[Lync 2013 voice routing]{Lync 2013 voice routing. From Microsoft TechEd Africa 2013}
 	\label{fig:lync_routing}
 \end{figure}
 
+
+
+\subsection{Security}
+Security is a major concern for all Lync deployment, as compromising Lync would have great effects on the company and users. The common security threats for Lync are described below\cite{microsoft_technet_common_2013}.
+
+\begin{description}
+\item[Eavesdropping] If an attacker is able to gain access to the data path used, he may be able to read exchanged data. This can be countered by encrypting the transfered data, using TLS and SRTP in the case of Lync.
+
+\item[Compromised-Key Attack] If an attacker is able to determine the key used to encrypt the data, an attacker can then use it to recover the encrypted data. To mitigate this risk, Lync Server 2013 uses a PKI to protect key data, and keys are exchanged over TLS connections.
+
+\item[Denial-of-Service Attack] An attacker can flood a service with request to prevent legitimate users' request from being processed. The Lync Director role is one of Lync's defense against this type of attack.
+
+\item[Identity Spoofing] An attacker can spoof a network component to operate instead of the legitimate component. To counter this risk, all Lync component are identified with secure certificates.
+
+\item[Man-in-the-Middle Attack] In a Man-in-the-Middle Attack, an attacker reroutes traffic between two users through a computer he controls in order to read the exchanged traffic. This type of attack in countered in Lync with the use of public-key cryptography.
+
+\item[RTP Replay Attack] A replay attack occurs when a valid media transmission between two parties is intercepted and retransmitted for malicious purposes. SRTP used in connection with a secure signaling protocol protects transmissions from replay attacks by enabling the receiver to maintain an index of already received RTP packets and compare each new packet with those already listed in the index.
+
+\item[Viruses and Worms] Viruses and worms can be spread through file transfers or URLs sent via IM. This risk can be mitigated with client antivirus software or file transfer restrictions.
+
+\item[Personally Identifiable Information] Some personal data can be disclosed over the network when using Lync. This can be controlled using client configuration.
+
+\end{description}
 
 
 
@@ -813,7 +866,7 @@ This section gives an overview of the project.
 		\item Telephony features allowing the new solution to replace a traditional telephony solution
 		\item Provide videoconferencing features
 		\item Integration with the existing IT, telephony, and videoconferencing environments
-		\item High availability and site survavibility
+		\item High availability and site survivability
 		\item Available from Contoso's internal network, and from an external network, on computers, smartphones, and tablets
 	\end{itemize}
 
@@ -886,7 +939,7 @@ This section gives an overview of the project.
 
 \subsection{Information Systems Impacts workshop}
 	\paragraph{}
-	This second workshop focused on the interactions between the proposed solution and the existing IT infrastructure. Major interactions were expected with AD, DNS, PKI, Echange, SQL, and support for Lync on a separate disk under the customer's choice of Windows OS.
+	This second workshop focused on the interactions between the proposed solution and the existing IT infrastructure. Major interactions were expected with AD, DNS, PKI, Exchange, SQL, and support for Lync on a separate disk under the customer's choice of Windows OS.
 
 	\paragraph{Active Directory}
 	AD was the first requirement, as AD is the base upon which many of Microsoft's products are based, including Lync Server 2013 or Exchange Server 2013. 
@@ -932,11 +985,9 @@ This section gives an overview of the project.
 	\item Show HDX and VSX\footnote{Videoconferencing endpoints produced by Polycom} equipments as contacts in Lync
 	\item Peer to peer communications with HDX/VSX, with and without RTVideo license
 	\item Conferencing between Lync, HDX and VSX clients in a Lync conference
-	\item Conferencing between Lync, HDX and VSX clients in a RMX\footnote{Equipement produced by Polycom to host conferences} virtual conference room
+	\item Conferencing between Lync, HDX and VSX clients in a RMX\footnote{Equipment produced by Polycom to host conferences} virtual conference room
 	\item Document sharing with HDX and VSX equipments.
 	\end{itemize}
-
-	\missingfigure{Polycom HDX/VSX}
 
 
 	\paragraph{Internet Access}
@@ -948,7 +999,7 @@ This section gives an overview of the project.
 		\item Anonymous users
 	\end{itemize}
 
-	To enable the Internet acces features, two components are needed: load-balancing and reverse proxy.
+	To enable the Internet access features, two components are needed: load-balancing and reverse proxy.
 	Load-balancing can be either DNS-based, or hardware-based. The reverse proxy component is provided by Contoso.
 
 
@@ -982,7 +1033,7 @@ This section gives an overview of the project.
 \subsection{Network workshop}
 
 	Contoso has two wide area networks (WANs) that will be available from the Campus site:
-	\paragraph{1. Sirius}
+	\paragraph{1. ToIP network}
 		\begin{itemize}
 			\item Layer 3 WAN
 			\item 20 Mbps
@@ -1007,12 +1058,12 @@ This section gives an overview of the project.
 		\end{itemize}
 			
 	
-	Contoso currently uses QoS on both WANs, based on the DSCP headers of packets. The current values are DSCP46 for Voice and Signalling, and DSCP AF41 for Video -- 
+	Contoso currently uses QoS on both WANs, based on the DSCP headers of packets. The current values are DSCP46 for Voice and Signaling, and DSCP AF41 for Video -- 
 	All Lync traffic must be tagged to use QoS.
 	
 	In all the other offices, Contoso has two distincts VLANs for voice and data traffic. However, all Lync clients (desktop software, phones, or mobile application) generate audio, video, and data traffic.
 	
-	Campus's WiFi architecture was in the process of being redesigned. The projected WiFi architecture was to use 4 Cisco controllers (providing routing and firewall functionnality), and multiple light access points (acting only as relays).
+	Campus's WiFi architecture was in the process of being redesigned. The projected WiFi architecture was to use 4 Cisco controllers (providing routing and firewall functionality), and multiple light access points (acting only as relays).
 
 \subsection{Operation and Supervision workshop}
 	\paragraph{}
@@ -1063,12 +1114,12 @@ This section gives an overview of the project.
 			\item[Domains] The domains names to be used are CONTOSO.FR and ADATUM.COM\footnote{placeholder name for another company} with CONTOSO.FR being the default SIP domain.
 			\item[Client] As many of the computers on the Campus site will run Microsoft Windows XP, the client deployed will be the Lync 2010 client.
 			\item[Deployment in two phases] Due to the time constraint and the complexity of the project and of Contoso IT infrastructure and organization, the Edge server portion of the project was removed from the first phase. It will be implemented in a second implementation phase.
-			\item[Only two environments] Contoso's usual deployement process involves three environments, each managed by a different team: Design, Integration, and Production. Due to the limited time available, only the Integration and Production environments will be involved for this project.
-			\item[Single Datacenter] All Lync servers will be hosted in a single Contoso datacenter, and branch sites will connect to the datacenter, with a survavibility solution in case the connection to the datacenter is lost.
-			\item[Redundancy] To ensure high availability with a goal of 99\% availability, all the components in the solution must have an n+1 redundancy. This includes the Lync servers, telephony gateways, reverse proxy and load balancing solutions.
+			\item[Only two environments] Contoso's usual deployment process involves three environments, each managed by a different team: Design, Integration, and Production. Due to the limited time available, only the Integration and Production environments will be involved for this project.
+			\item[Single Datacenter] All Lync servers will be hosted in a single Contoso datacenter, and branch sites will connect to the datacenter, with a survivability solution in case the connection to the datacenter is lost.
+			\item[Redundancy] To ensure high availability with a goal of 99\% availability, all the components in the solution must have an n+1 redundancy, which means that for each component, an extra node should be used, so that there is no service degradation in case of a single node failure. This includes the Lync servers, telephony gateways, reverse proxy and load balancing solutions.
 			\item[Telephony] Lync should be the primary telephony solution for 1200 users at Campus. Users should use their local PSTN access for external calls. Lync should be interconnected with Contoso's telephony environment via the G.729 codec.
 			\item[Security] To ensure the confidentiality of data and the integrity of the service, all traffic must be encrypted, and Lync Director servers must be used.
-			\item[WAN usage] Due to the limited bandwidth available on SIRIUS, the Ethernet MAN is preferable for Lync data -- if the creation of priority classes and an operator SLA can be obtained.
+			\item[WAN usage] Due to the limited bandwidth available on the ToIP network, the Ethernet MAN is preferable for Lync data -- if the creation of priority classes and an operator SLA can be obtained.
 			\item[New SCOM 2012 infrastructure] A new SCOM 2012 infrastructure is being deployed by Contoso and will be used for Lync.
 		\end{description}
 
@@ -1096,7 +1147,7 @@ This section lists the requirements that had to be met by Contoso's infrastructu
 		\begin{itemize}
 			\item A, SRV and CNAME entries can be added to the DNS zones
 			\item DNS zones CONTOSO.FR and ADATUM.COM must be configured in split-domain.
-			\item The Lync infrastructe and internal clients must be able to resolve the following internal DNS zones: CONTOSO.FR, ADATUM.COM, and COMMON.CONTOSO.FR
+			\item The Lync infrastructure and internal clients must be able to resolve the following internal DNS zones: CONTOSO.FR, ADATUM.COM, and COMMON.CONTOSO.FR
 			\item The Lync infrastructure in DMZ must be able to resolve external DNS zones CONTOSO.FR and ADATUM.COM
 			\item External components accessing Lync services must be able to resolve the CONTOSO.FR and ADATUM.COM external zones.
 		\end{itemize}
@@ -1284,14 +1335,14 @@ Clients with a mobile device, such as an Apple iPhone or Apple iPad, use the sam
 		
 		\item[A Watcher Node] This server monitors the solution's components and reports their status to the SCOM supervision infrastructure. The SQL Server Reporting Services (SSRS) will also be installed on this server.
 		
-		\item[1 SNOM provisionning server] This server is required for automatic provisionning of SNOM phones. This server will be co-located with the SQL Witness
+		\item[1 SNOM provisioning server] This server is required for automatic provisioning of SNOM phones. This server will be co-located with the SQL Witness
 		
-		\item[4 SBC Sonus UX2000 gateways] 2 in the datacenter, 2 at Campus, they respectively provide interconnection with the SIRIUS WAN and Campus's PSTN access.
+		\item[4 SBC Sonus UX2000 gateways] 2 in the datacenter, 2 at Campus, they provide interconnection with the ToIP network and the PSTN.
 		Datacenter gateway requirements:
 		\begin{itemize}
 			\item 1 UX2000-600 (UX2000 with 6 high capacity DSP, allowing 600 concurrent calls)
 			\item 1 UX2000-T1E1-2 (A two-card E1 module)
-			\item 5 UX-SIP-25 (5x25 = 125 SIP lisenses)
+			\item 5 UX-SIP-25 (5x25 = 125 SIP licenses)
 		\end{itemize}
 		Campus gateway requirements:
 		\begin{itemize}
@@ -1366,7 +1417,7 @@ This section describes the design of the telephony components of this implementa
 	The telephony architecture is based on the main datacenter, and the campus site.
 
 	\paragraph{Datacenter}
-	The datacenter hosts the mediation pool, which is collocated with the front end pool, and interconnects the Lync infrastructure with the SIRIUS network via the SONUS gateways and a SBC Acme Packet cluster, and with the PSTN via the SONUS gateways.
+	The datacenter hosts the mediation pool, which is collocated with the front end pool, and interconnects the Lync infrastructure with the ToIP network via the SONUS gateways and a SBC Acme Packet cluster, and with the PSTN via the SONUS gateways.
 	
 	Contoso's ToIP network has some specificities requiring special consideration, for example only the G.729 ALaw codec is supported, as some equipments are incompatible with the G.729 BLaw codec. Moreover, some Aastra PBX only support the G.711 codec. This influenced the choice of the Sonus gateways, and their configuration.
 	
@@ -1382,11 +1433,21 @@ This section describes the design of the telephony components of this implementa
 	\begin{description}
 		\item[Interconnection via the local gateways] 
 			In this scenario, the gateways at the Campus site connect directly to the SBC Acme Packet cluster.
-			\missingfigure{local gateways schema}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.9\textwidth, page=5]{Schemas/design.pdf}
+				\caption{ToIP interconnection via the local gateways}
+				\label{fig:case_toip_local}
+			\end{figure}
 			\missingfigure{advantages/drawbacks table}
 		\item[Interconnection via the central gateways] 
 			In this scenario, the gateways at the datacenter connect to the SBC Acme Packet cluster.
-			\missingfigure{central gateways schema}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.9\textwidth, page=6]{Schemas/design.pdf}
+				\caption{ToIP interconnection via the datacenter gateways}
+				\label{fig:case_toip_datacenter}
+			\end{figure}
 			\missingfigure{advantages/drawbacks table}
 	\end{description}
 	
@@ -1405,7 +1466,12 @@ This section describes the design of the telephony components of this implementa
 	\end{itemize}
 	
 	Between the PSTN and the front end pool, the G.711 codec is used, while between the front end pool and users from a site without PSTN access, the codec used can be either G.711 or RTAudio Narrowband if the RTT is above 25ms.
-	\missingfigure{Datacenter interconnection with the PSTN}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth, page=7]{Schemas/design.pdf}
+		\caption{Datacenter interconnection with the PSTN}
+		\label{fig:case_pstn_datacenter}
+	\end{figure}
 		
 	
 	\paragraph{Campus interconnection with the PSTN}
@@ -1415,7 +1481,12 @@ This section describes the design of the telephony components of this implementa
 		\item acces to the PSTN for users at a site without PSTN access
 	\end{itemize}
 		
-	\missingfigure{Campus interconnection with the PSTN}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth, page=8]{Schemas/design.pdf}
+		\caption{Campus interconnection with the PSTN}
+		\label{fig:case_pstn_campus}
+	\end{figure}
 
 	
 \subsubsection{Sizing of the Sonus gateways}
@@ -1464,46 +1535,71 @@ The Lync infrastructure will be configured to use Mediation server redundancy so
 	
 	\paragraph{Types of traffic}
 	There are three types of telephony traffic possible, each involves a different number manipulation process.
-	\missingfigure{Types of telephony traffic}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth, page=9]{Schemas/design.pdf}
+		\caption{The three types of telephony traffic}
+		\label{fig:case_traffic_types}
+	\end{figure}
 	
 	\paragraph{PSTN to Lync}
 	\begin{description}
 		\item[Called number] Usually, the operator provides the last 4 digits of the called number. The Lync front end server translates this number to a E.164 number according to the dialplan corresponding to the gateway.
-		\item[Caller number] Can be either a national number (usually 9 digits), an international number (of variable length) or an anonymous number. If the number is national or international, the getway translates it into an E.164 number.
+		\item[Caller number] Can be either a national number (usually 9 digits), an international number (of variable length) or an anonymous number. If the number is national or international, the gateway translates it into an E.164 number.
 	\end{description}
-	\missingfigure{PSTN to Lync}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth, page=10]{Schemas/design.pdf}
+		\caption{PSTN to Lync number manipulations}
+		\label{fig:case_pstn_to_lync}
+	\end{figure}
 
 	\paragraph{Lync to PSTN}
 	\begin{description}
 		\item[Called number] The Lync server does the translation before sending the number to the gateway.
 		\item[Caller number] The gateway translates the caller number from E.164 to a 9-digit number.
 	\end{description}
-	\missingfigure{Lync to PSTN}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth, page=11]{Schemas/design.pdf}
+		\caption{Lync to PSTN number manipulations}
+		\label{fig:case_lync_to_pstn}
+	\end{figure}
 
 	\paragraph{ToIP to Lync}
 	\begin{description}
 		\item[Called number] The SBC returns a 6-digit number. The Lync server translates the number to a E.164 number according to the datacenter's dialplan (as only the datacenter's gateways are connected to the ToIP network).
 		\item[Caller number] The SBC returns a 6-digit number. There is no manipulation on this number. However this prevents the resolution of the caller id for missed calls.
 	\end{description}
-	\missingfigure{ToIP to Lync}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth, page=12]{Schemas/design.pdf}
+		\caption{ToIP to Lync number manipulations}
+		\label{fig:case_toip_to_lync}
+	\end{figure}
 
 	\paragraph{Lync to ToIP}
 	\begin{description}
 		\item[Called number] Most internal numbers are 3 or 6 digits numbers, but some have variable length. Therefore, the +0000 prefix has been chosen to identify internal number. This prefix is added by the Lync client. The Lync server removes and normalizes the number into a E.164 number, and the gateway translates the number into a 6 digit number.
 		\item[Caller number] The Lync client sends a E.164 number, which is translated into a 6 digit number by the gateway.
 	\end{description}
-	\missingfigure{Lync to ToIP}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth, page=13]{Schemas/design.pdf}
+		\caption{Lync to ToIP number manipulations}
+		\label{fig:case_lync_to_toip}
+	\end{figure}
 	
 
 \section{Deployment}
 
 \paragraph{}
-This section describes the deployement of the implementation, and some of the challenges encountered.
+This section describes the deployment of the implementation, and some of the challenges encountered.
 
 \subsection{Construction}
-	The previously detailled implementation was deployed on Contoso's architecture in two steps: 
+	The previously detailed implementation was deployed on Contoso's architecture in two steps: 
 	\begin{description}
-		\item[Integration] First Microsoft consultants setup the solution in the integration environnement, and checked that the solution behaved as expected. Based on this implementation, some modifications to the design were made, and construction guides detailling the construction process were redacted. This purpose of this environment is to be able to make sure the solution is designed correctly, that the integration between the solution and others is operational, and that the installation process does not impact other services. Every new solution or update to a solution is applied in the integration environment before going into production. 
+		\item[Integration] First Microsoft consultants setup the solution in the integration environment, and checked that the solution behaved as expected. Based on this implementation, some modifications to the design were made, and construction guides detailing the construction process were redacted. This purpose of this environment is to be able to make sure the solution is designed correctly, that the integration between the solution and others is operational, and that the installation process does not impact other services. Every new solution or update to a solution is applied in the integration environment before going into production. 
 		
 		\item[Production] Contoso's teams then deployed the solution in the production environment according to the construction guides. This allowed the Contoso team to familiarized themselves with the solution and ask specific questions about the design.
 	\end{description}
@@ -1572,7 +1668,7 @@ In the third phase, all future Campus users were given detailed FAQ sheets and p
 
 This master's thesis project demonstrated that Lync 2013 can be en effective solution for multiple purposes, including a complete telephony replacement. 
 
-This project also helped providing data and feedback about Lync server 2013. This led to two upgrade requests to the product development team (improvments to the call deleguates features and to the call routing) and some of the data was used to redact the reference documents for deploying Lync Server 2013.
+This project also helped providing data and feedback about Lync server 2013. This led to two upgrade requests to the product development team (improvements to the call delegates features and to the call routing) and some of the data was used to redact the reference documents for deploying Lync Server 2013.
 
 The project also showed that although technical problems can arise during the construction of an unified communications solutions based on Lync, most problems, and the most critical problems are organizational problems, or problems that can be resolved through the analysis of the users' needs and user training.
 
@@ -1585,7 +1681,7 @@ This implementation can still be improved, by adding the edge features that were
 \subsection{Lync and Unified Communications}
 Some aspects of Lync were not studied in this project, and might be of interest, such as the integration of the Lync 2013 client, or the use of Lync as a platform for more complex applications, such as a call-center, with the use of the Lync APIs.
 
-A more in-depth study of Lync's network usage, including QoS and CAC impact would be helpful in determing precisely the right network sizing for future implementations.
+A more in-depth study of Lync's network usage, including QoS and CAC impact would be helpful in determining precisely the right network sizing for future implementations.
 
 \section{Reflections}
 This master's thesis project is the design and construction of an unified communication solution, used for instant messaging, conferencing and telephony. Unified communications solutions can have a variety of positive consequences for companies, but other effects may require further reflection or attention when planning an unified communications solution.
