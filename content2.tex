@@ -111,28 +111,27 @@ The ability to communicate in real-time using text messages can be a very simple
 
 \subsubsection{Unified Messaging}
 Unified messaging (UM) components are designed to provide users with a single interface for various communications systems, such as email, SMS/MMS, voice mail, and instant messaging\cite{banner_understanding_2010}.
-\begin{figure}[h!]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth]{Schemas/um.pdf}
 	\caption[Typical communications system]{Typical communications system}
 	\label{fig:um_typical}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth, page=2]{Schemas/um.pdf}
 	\caption[Client-based UM]{Typical communications system}
 	\label{fig:um_client}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\textwidth, page=3]{Schemas/um.pdf}
 	\caption{Server-based UM}
 	\label{fig:um_server}
 \end{figure}
 
-\clearpage
 
 \subsubsection{Speech access and personal assistant}
 Personal assistants allow users to access enhanced functionality from low level devices, such as basic phones. Examples of this functionality include using a speech recognition and synthesis based interface to manage a calendar, meetings, or out of office status\cite{pleasant_what_2008}.
@@ -387,6 +386,7 @@ There are multiple sources of documentation for planning and deploying Microsoft
 
 \subsection{Disaster Recovery and Business Continuity Planning in Action: Japan 2011}
 This article, published by Microsoft IT in July 2011, follows the March 2011 earthquake in Japan and its impact on the Lync 2010 infrastructure, as well as the disaster recovery processes used and the lessons learned\cite{microsoft_it_showcase_disaster_2011}.
+
 
 \chapter{Microsoft Unified Communication Solution}\label{chapter_ms_UC}
 \paragraph{}
@@ -1153,7 +1153,7 @@ This section lists the requirements that had to be met by Contoso's infrastructu
 		\end{itemize}
 		
 	\subsubsection{PKI and certificates}
-		To allow Lync traffic to use TLS and MTLS connections, the Lync infrastructure requires X.509 certificates.	
+		To allow Lync traffic to use TLS and MTLS connections, the Lync infrastructure requires X.509 certificates.	To limit the number of subject alternative name (SAN) by certificate, Contoso wishes that each certificate be deployed on only one server, if possible.
 		
 	\subsubsection{File Share}
 		The Lync infrastructure uses a file share for exchanging information, such as topology changes, address book files or conference data. As this component is required, the file share should be highly available. Contoso chose to use their existing Distributed File System (DFS) infrastructure, with the DFS-R replication mechanism, which replicates only the updated part of files.
@@ -1169,8 +1169,22 @@ This section lists the requirements that had to be met by Contoso's infrastructu
 			\item Jitter should be under 30ms and latency under 150ms.
 		\end{itemize}
 		
+		A preliminary network usage assessment, which results are presented in table \ref{tab:case_bandwidth}, shows that the bandwidth available for Lync traffic on the ToIP network is insufficient for the Campus site, as there is only 7Mbps available. Therefore, the decision was taken to use the ethernet MAN for transmitting Lync traffic between the datacenter and the branch sites.
 		
-		\todo{Bandwidth calculation}
+		\begin{table}[H]
+		\centering
+		\begin{tabular}{c|c}
+			\textbf{Traffic} & \textbf{Bandwidth in Mbps} \\ \hline 
+			Signaling, IM, and presence & 1,10 \\
+			Calls to ToIP network via SBC & 2,07 \\
+			PSTN calls for external users & 0,63 \\
+			Audio conference & 0,90 \\
+			Video conference & 1,98 \\
+			Application sharing & 2,63 \\ \hline 
+			Total & 9,31
+		\end{tabular}
+		\caption{\label{tab:case_bandwidth} Bandwidth requirements for Campus}
+		\end{table}	
 		
 		
 		
@@ -1210,10 +1224,7 @@ This section lists the requirements that had to be met by Contoso's infrastructu
 	\end{table}
 
 	
-	\subsubsection{PKI}
-	This section lists the certificate requirements for the Lync solution. To limit the number of subject alternative name (SAN) by certificate, Contoso wishes that each certificate be deployed on only one server, if possible.
-	
-	\missingfigure{Certificate table}
+
 	
 	\subsubsection{Strategies}
 	
@@ -1221,7 +1232,9 @@ This section lists the requirements that had to be met by Contoso's infrastructu
 		
 		\paragraph{Monitoring} All CDR and QoE records will be kept for 180 days.
 		
-		\paragraph{QoS} To enable QoS tagging of Lync traffic, the client and server ports used by Lync will be configured as follows:
+		\paragraph{QoS} To enable QoS tagging of Lync traffic, two mechanisms are used. On Windows XP clients, the QoS Packet Scheduler was installed, while on servers and other clients, the Lync software was configured to use specific ports, and QoS values were assigned to this ports using GPOs. The DSCP values were chosen to respect the values used by Contoso, or the commonly used values.
+				
+		The client and server ports used by Lync were configured as follows:
 
 		\begin{table}[H]
 		\centering
@@ -1439,7 +1452,18 @@ This section describes the design of the telephony components of this implementa
 				\caption{ToIP interconnection via the local gateways}
 				\label{fig:case_toip_local}
 			\end{figure}
-			\missingfigure{advantages/drawbacks table}
+			
+			\begin{table}[H]
+			\centering
+			\begin{tabularx}{\textwidth}{X|X}
+				\textbf{Advantages} & \textbf{Drawback} \\ \hline 
+				The G.729 CODEC is used through the WAN, which requires less bandwidth than G.711 & More complex as the SBC will be connected to all gateways, which will be more difficult to configure and maintain \\ \hline 
+				The call quality should be better, as there is one node less and the G.711 CODEC is sure to be used before transcoding & More expensive as each local gateway will require SIP licenses \\ \hline 
+				& No Call Admission Control possible
+			\end{tabularx}
+			\caption{\label{tab:case_toip_local} Local interconnection advantages and drawbacks}
+			\end{table}			
+	
 		\item[Interconnection via the central gateways] 
 			In this scenario, the gateways at the datacenter connect to the SBC Acme Packet cluster.
 			\begin{figure}[H]
@@ -1448,7 +1472,18 @@ This section describes the design of the telephony components of this implementa
 				\caption{ToIP interconnection via the datacenter gateways}
 				\label{fig:case_toip_datacenter}
 			\end{figure}
-			\missingfigure{advantages/drawbacks table}
+			
+			\begin{table}[H]
+			\centering
+			\begin{tabularx}{\textwidth}{X|X}
+				\textbf{Advantages} & \textbf{Drawback} \\ \hline 
+				Simpler SBC configuration, and less load on the SBC & Using G.711 through the WAN requires more bandwidth \\ \hline 
+				Cheaper as less SIP licenses are required & If the RTT is over 25ms, the RTAudio Narrowband CODEC will be used, which will degrade the call quality\\ \hline 
+				Call Admission Control is possible & One more node is used, which can increase latency and reduce the call quality
+			\end{tabularx}
+			\caption{\label{tab:case_toip_datacenter} Datacenter interconnection advantages and drawbacks}
+			\end{table}	
+
 	\end{description}
 	
 	As voice quality is an essential factor for the Campus site, and the RTT is not guaranteed to be under 25ms, the interconnection via the local gateways was chosen for this implementation.
