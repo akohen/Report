@@ -797,7 +797,7 @@ The figure \ref{fig:lync_routing} describes the call routing process used by Lyn
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth, page=6]{Schemas/lync_routing.pdf}
+	\includegraphics[width=1.2\textwidth]{Schemas/lync_routing.pdf}
 	\caption[Lync 2013 voice routing]{Lync 2013 voice routing. From Microsoft TechEd Africa 2013}
 	\label{fig:lync_routing}
 \end{figure}
@@ -919,7 +919,7 @@ This section gives an overview of the project.
 		Contoso had several requirements for the Lync infrastructure:
 		\begin{itemize}
 		\item A Contoso datacenter should host the main Lync Server 2013 farm, and should provide Lync services to multiple sites.
-		\item The Lync infrastructure had to be highly available (expected availability of at least 99\%).
+		\item The Lync infrastructure had to be highly available, and resistant to a single component failure.
 		\item The interconnection with the company's telephony infrastructure must be secure, but not the interconnection with unified messaging and videoconferencing.
 		\item A disaster recovery plan was not required.
 		\item The campus site should have survivability (i.e., telephony services should operate even if the connection to the datacenter is unavailable).
@@ -1116,7 +1116,7 @@ This section gives an overview of the project.
 			\item[Deployment in two phases] Due to the time constraint and the complexity of the project and of Contoso IT infrastructure and organization, the Edge server portion of the project was removed from the first phase. It will be implemented in a second implementation phase.
 			\item[Only two environments] Contoso's usual deployment process involves three environments, each managed by a different team: Design, Integration, and Production. Due to the limited time available, only the Integration and Production environments will be involved for this project.
 			\item[Single Datacenter] All Lync servers will be hosted in a single Contoso datacenter, and branch sites will connect to the datacenter, with a survivability solution in case the connection to the datacenter is lost.
-			\item[Redundancy] To ensure high availability with a goal of 99\% availability, all the components in the solution must have an n+1 redundancy, which means that for each component, an extra node should be used, so that there is no service degradation in case of a single node failure. This includes the Lync servers, telephony gateways, reverse proxy and load balancing solutions.
+			\item[Redundancy] To ensure high availability and resistance to a single failure, all the components in the solution must have an n+1 redundancy, which means that for each component, an extra node should be used, so that there is no service degradation in case of a single node failure. This includes the Lync servers, telephony gateways, reverse proxy and load balancing solutions.
 			\item[Telephony] Lync should be the primary telephony solution for 1200 users at Campus. Users should use their local PSTN access for external calls. Lync should be interconnected with Contoso's telephony environment via the G.729 codec.
 			\item[Security] To ensure the confidentiality of data and the integrity of the service, all traffic must be encrypted, and Lync Director servers must be used.
 			\item[WAN usage] Due to the limited bandwidth available on the ToIP network, the Ethernet MAN is preferable for Lync data -- if the creation of priority classes and an operator SLA can be obtained.
